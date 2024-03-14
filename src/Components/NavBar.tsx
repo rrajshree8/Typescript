@@ -97,7 +97,6 @@ export default function NavBar() {
         ) : null}
       </Box>
 
-      <Box p={4}>Main Content Here</Box>
     </>
   )
 }
