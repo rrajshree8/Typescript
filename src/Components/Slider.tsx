@@ -1,46 +1,75 @@
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import SwiperCore from "swiper";
+import { Navigation } from "swiper/modules";
+import { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import { Box, Image } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { HTTP_URL } from '../utils';
-import { Image, Img } from '@chakra-ui/react';
+// Install Swiper modules
+SwiperCore.use([Navigation]);
 
-export default function Slider() {
+interface BannerItem {
+  url: string;
+}
 
-    const [banner,setBanner]=useState([])
+interface CustomSwiperRef extends SwiperCore {
+  params: any;
+  originalParams: any;
+  el: HTMLElement;
+  wrapperEl: HTMLElement;
+}
 
+const Slider = () => {
+  const bgColor = useColorModeValue("white", "black");
 
-    useEffect(()=>{
+  const [banner, setBanner] = useState<BannerItem[]>([]);
+  const swiper = useRef<CustomSwiperRef | null>(null);
 
-        axios.get(`${HTTP_URL}/public/general`)
-  .then(function (response) {
-    setBanner(response.data.data.banners)
-    console.log(response.data.data.banners)
-
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.bitdelta.com/api/v1/public/general"
+        );
+        setBanner(response.data.data.banners);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     fetchData();
   }, []);
 
   return (
     <>
-      <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
-        {banner && banner?.map((item,idx)=>{
-            return(
-                <SwiperSlide key={idx}>
-<Img src={`https://media.bitdelta.com/${item.url}`}/>
-                </SwiperSlide>
-
-            )
-        })}
-      </Swiper>
+      
+        <Swiper
+          ref={(instance) => {
+            if (instance) {
+              swiper.current = instance as unknown as CustomSwiperRef;
+            }
+          }}
+          navigation
+          pagination={{ clickable: true }}
+          className="mySwiper"
+          style={{ padding: "0px",backgroundColor:bgColor }}
+        >
+          {banner.map((item: BannerItem, index: number) => (
+            <SwiperSlide key={index} style={{ padding: "0px",backgroundColor:bgColor }}>
+              <Box position="relative"  h="s">
+                <Image
+                  objectFit="cover"
+                  src={item.url}
+                  alt={`Slide ${index}`}
+                />
+              </Box>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+     
     </>
   );
 };
