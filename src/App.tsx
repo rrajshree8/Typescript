@@ -11,10 +11,9 @@ function App() {
   return (
     <Box>
       <NavBar/>
-      <Slider/>
-      <CoinTable/>
-      <CoinCard/>
-      <News/>
+      <Container>
+        <Slider/>
+      </Container>
 
     </Box>
   );

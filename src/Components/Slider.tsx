@@ -18,6 +18,7 @@ export default function Slider() {
         axios.get(`${HTTP_URL}/public/general`)
   .then(function (response) {
     setBanner(response.data.data.banners)
+    console.log(response.data.data.banners)
 
   })
   .catch(function (error) {
@@ -25,20 +26,23 @@ export default function Slider() {
     console.log(error);
   })
 
-    },[])
-
-
+    fetchData();
+  }, []);
 
   return (
     <>
       <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
-        {banner && banner?.map((item:any,idx)=>{
-          return(
-           
-            item.url.startsWith("https")? <SwiperSlide key={idx}><img src={item.url}/></SwiperSlide> : null
-          )
+        {banner && banner?.map((item,idx)=>{
+            return(
+                <SwiperSlide key={idx}>
+<Img src={`https://media.bitdelta.com/${item.url}`}/>
+                </SwiperSlide>
+
+            )
         })}
       </Swiper>
     </>
   );
-}
+};
+
+export default Slider;
